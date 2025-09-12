@@ -1,0 +1,259 @@
+###########################################################################
+# Copyright (c) 2025, Ampere Computing LLC
+# Ampere Computing LLC Proprietary and Confidential
+#
+# License terms can be found in the LICENSE.TXT file at the root of this project.
+###########################################################################
+
+## Dont remove this identifier
+events_core
+## if the named events are not found, hex value based r* events will be used
+## Altra Family supports max 6 events in a group
+## AmpereOne Family suppports 10 events in a group
+#General
+{
+cycles              | r11
+instructions        | r08
+cycles:k            | r11:k
+instructions:k      | r08:k
+}
+#Branch_Effectiveness:
+{
+br_mis_pred_retired | r22
+br_retired          | r21
+instructions        | r08
+}
+#DTLB_Effectiveness
+{
+dtlb_walk           | r34
+l1d_tlb             | r25
+l1d_tlb_refill      | r05
+l2d_tlb             | r2f
+l2d_tlb_refill      | r2d
+instructions        | r08
+}
+#ITLB_Effectiveness:
+{
+itlb_walk           | r35
+l1i_tlb             | r26
+l1i_tlb_refill      | r02
+instructions        | r08
+}
+#L1_Cache_Effectiveness:
+{
+l1i_cache           | r14
+l1i_cache_refill    | r1
+l1d_cache           | r4
+l1d_cache_refill    | r3
+instructions        | r08
+}
+#L2_Cache_Effectiveness:
+{
+l2d_cache           | r16
+l2d_cache_refill    | r17
+instructions        | r08
+}
+#Cycle_Accounting:
+{
+stall_slot_frontend | r3e
+stall_slot_backend  | r3d
+cycles              | r11
+op_spec             | r3b
+}
+#Operation_Mix_Group1:
+{
+ld_spec             | r70
+st_spec             | r71
+dp_spec             | r73
+ase_spec            | r74
+vfp_spec            | r75
+inst_spec           | r1b
+}
+#Operation_Mix_Group2:
+{
+crypto_spec         | r77
+pc_write_spec       | r76
+br_immed_spec       | r78
+br_return_spec      | r79
+br_indirect_spec    | r7a
+inst_spec           | r1b
+}
+#Memory
+{
+mem_access          | r13
+bus_access          | r19
+}
+#Pipeline_Stall_Frontend
+{
+stall_frontend_tlb      | rd20c
+stall_frontend_cache    | rd20b
+idr_stall_bob_id        | rd200
+idr_stall_flush         | rd206
+cycles                  | r11
+}
+#Pipeline_Stall_Backend
+{
+stalled_cycles_backend      | r24
+stall_backend_tlb           | rd20e
+stall_backend_cache         | rd20d
+stall_backend_mem           | r4005
+stall_backend_resource      | rd20f
+cycles                      | r11
+}
+#Pipeline_Stall_Backend_L4
+{
+idr_stall_lob_id         | rd201
+idr_stall_sob_id         | rd202
+idr_stall_rob_id         | rd205
+idr_stall_ixu_sched      | rd203
+idr_stall_fsu_sched      | rd204
+cycles                   | r11
+}
+#Pipeline_IXU
+{
+ixu_num_uops_issued | rd300
+ixu_issue_cancel    | rd301
+ixu_ixa_issued      | rd304
+ixu_ixb_issued      | rd307
+ixu_ixc_issued      | rd30a
+ixu_ixd_issued      | rd30d
+cycles              | r11
+}
+#Pipeline_FSU
+{
+fsu_issued      | rd400
+fsu_fsx_issued  | rd401
+fsu_fsy_issued  | rd402
+fsu_fsz_issued  | rd403
+fsu_cancel      | rd404
+cycles          | r11
+}
+#Micro-ops
+{
+op_retired      | r3a
+op_spec         | r3b
+cycles          | r11
+}
+
+## Dont remove this identifier
+events_cmn
+## CMN-650 supports max 8 events in a group
+## CMN event name is different on different kernel
+## use ARM_CMN_0 and ARM_CMN_1 as placeholder for cmn name of socket0 and socket1
+{
+ARM_CMN_0/hnf_slc_sf_cache_access,name='slc_access'/
+ARM_CMN_0/hnf_cache_miss,name='slc_miss'/
+}
+{
+ARM_CMN_0/hnf_mc_reqs,name='mc_reqs'/
+ARM_CMN_0/hnf_mc_retries,name='mc_retries'/
+}
+## wp events
+## SN-F nodeids : 0 896 56 952
+{
+ARM_CMN_0/watchpoint_up,wp_dev_sel=0,wp_chn_sel=3,wp_grp=0,wp_val=0xffffffffffffffff,wp_mask=0xffffffffffffffff,bynodeid=1,nodeid=0,name='wp_memrd_1'/
+ARM_CMN_0/watchpoint_down,wp_dev_sel=0,wp_chn_sel=3,wp_grp=0,wp_val=0xffffffffffffffff,wp_mask=0xffffffffffffffff,bynodeid=1,nodeid=0,name='wp_memwr_1'/
+ARM_CMN_0/watchpoint_up,wp_dev_sel=0,wp_chn_sel=3,wp_grp=0,wp_val=0xffffffffffffffff,wp_mask=0xffffffffffffffff,bynodeid=1,nodeid=896,name='wp_memrd_3'/
+ARM_CMN_0/watchpoint_down,wp_dev_sel=0,wp_chn_sel=3,wp_grp=0,wp_val=0xffffffffffffffff,wp_mask=0xffffffffffffffff,bynodeid=1,nodeid=896,name='wp_memwr_3'/
+ARM_CMN_0/watchpoint_up,wp_dev_sel=0,wp_chn_sel=3,wp_grp=0,wp_val=0xffffffffffffffff,wp_mask=0xffffffffffffffff,bynodeid=1,nodeid=56,name='wp_memrd_5'/
+ARM_CMN_0/watchpoint_down,wp_dev_sel=0,wp_chn_sel=3,wp_grp=0,wp_val=0xffffffffffffffff,wp_mask=0xffffffffffffffff,bynodeid=1,nodeid=56,name='wp_memwr_5'/
+ARM_CMN_0/watchpoint_up,wp_dev_sel=0,wp_chn_sel=3,wp_grp=0,wp_val=0xffffffffffffffff,wp_mask=0xffffffffffffffff,bynodeid=1,nodeid=952,name='wp_memrd_7'/
+ARM_CMN_0/watchpoint_down,wp_dev_sel=0,wp_chn_sel=3,wp_grp=0,wp_val=0xffffffffffffffff,wp_mask=0xffffffffffffffff,bynodeid=1,nodeid=952,name='wp_memwr_7'/
+}
+{
+ARM_CMN_0/watchpoint_up,wp_dev_sel=1,wp_chn_sel=3,wp_grp=0,wp_val=0xffffffffffffffff,wp_mask=0xffffffffffffffff,bynodeid=1,nodeid=0,name='wp_memrd_2'/
+ARM_CMN_0/watchpoint_down,wp_dev_sel=1,wp_chn_sel=3,wp_grp=0,wp_val=0xffffffffffffffff,wp_mask=0xffffffffffffffff,bynodeid=1,nodeid=0,name='wp_memwr_2'/
+ARM_CMN_0/watchpoint_up,wp_dev_sel=1,wp_chn_sel=3,wp_grp=0,wp_val=0xffffffffffffffff,wp_mask=0xffffffffffffffff,bynodeid=1,nodeid=896,name='wp_memrd_4'/
+ARM_CMN_0/watchpoint_down,wp_dev_sel=1,wp_chn_sel=3,wp_grp=0,wp_val=0xffffffffffffffff,wp_mask=0xffffffffffffffff,bynodeid=1,nodeid=896,name='wp_memwr_4'/
+ARM_CMN_0/watchpoint_up,wp_dev_sel=1,wp_chn_sel=3,wp_grp=0,wp_val=0xffffffffffffffff,wp_mask=0xffffffffffffffff,bynodeid=1,nodeid=56,name='wp_memrd_6'/
+ARM_CMN_0/watchpoint_down,wp_dev_sel=1,wp_chn_sel=3,wp_grp=0,wp_val=0xffffffffffffffff,wp_mask=0xffffffffffffffff,bynodeid=1,nodeid=56,name='wp_memwr_6'/
+ARM_CMN_0/watchpoint_up,wp_dev_sel=1,wp_chn_sel=3,wp_grp=0,wp_val=0xffffffffffffffff,wp_mask=0xffffffffffffffff,bynodeid=1,nodeid=952,name='wp_memrd_8'/
+ARM_CMN_0/watchpoint_down,wp_dev_sel=1,wp_chn_sel=3,wp_grp=0,wp_val=0xffffffffffffffff,wp_mask=0xffffffffffffffff,bynodeid=1,nodeid=952,name='wp_memwr_8'/
+}
+## CCIX nodeids: 24 920
+{
+ARM_CMN_0/watchpoint_up,wp_dev_sel=0,wp_chn_sel=3,wp_grp=0,wp_val=0xffffffffffffffff,wp_mask=0xffffffffffffffff,bynodeid=1,nodeid=24,name='ccix_in_1'/
+ARM_CMN_0/watchpoint_down,wp_dev_sel=0,wp_chn_sel=3,wp_grp=0,wp_val=0xffffffffffffffff,wp_mask=0xffffffffffffffff,bynodeid=1,nodeid=24,name='ccix_out_1'/
+ARM_CMN_0/watchpoint_up,wp_dev_sel=0,wp_chn_sel=3,wp_grp=0,wp_val=0xffffffffffffffff,wp_mask=0xffffffffffffffff,bynodeid=1,nodeid=920,name='ccix_in_2'/
+ARM_CMN_0/watchpoint_down,wp_dev_sel=0,wp_chn_sel=3,wp_grp=0,wp_val=0xffffffffffffffff,wp_mask=0xffffffffffffffff,bynodeid=1,nodeid=920,name='ccix_out_2'/
+}
+## END OF EVENTS. DON'T EDIT LINE BREAKER
+
+;
+
+## Start of metrics
+
+#General Metrics
+IPC = [instructions] / [cycles]
+IPC_kernel = [instructions:k] / [cycles:k]
+cpu_freq = [cycles] / ([const_cpus] * [const_sampletime] ) / 1000000000
+
+#Cycle_Accounting Metrics
+frontend_bound = 100 * ([cycles] * [const_width]-[op_spec]-[stall_slot_backend]) / ([cycles] * [const_width])
+backend_bound = 100 * [stall_slot_backend] / ([cycles] * [const_width])
+
+#Branch_Effectiveness Metrics
+branch_mispredict% = 100 * [br_mis_pred_retired] / [br_retired]
+branch_mpki = 1000 * [br_mis_pred_retired] / [instructions]
+
+#DTLB_Effectiveness Metrics
+dtlb_mpki = 1000 * [dtlb_walk] / [instructions]
+dtlb_walk% = 100 * [dtlb_walk] / [l1d_tlb]
+l1d_tlb_miss% = 100 * [l1d_tlb_refill] / [l1d_tlb]
+l1d_tlb_mpki = 1000 * [l1d_tlb_refill] / [instructions]
+l2_tlb_miss% = [l2d_tlb_refill] / [l2d_tlb]
+l2_tlb_mpki = 1000 * [l2d_tlb_refill] / [instructions]
+
+#ITLB_Effectiveness Metrics
+itlb_mpki = 1000 * [itlb_walk] / [instructions]
+itlb_walk% = 100 * [itlb_walk] / [l1i_tlb]
+l1i_tlb_miss% = 100 * [l1i_tlb_refill] / [l1i_tlb]
+l1i_tlb_mpki = 1000 * [l1i_tlb_refill] / [instructions]
+
+#L1_Cache_Effectiveness Metrics
+l1i_mpki = 1000 * [l1i_cache_refill] / [instructions]
+l1d_mpki = 1000 * [l1d_cache_refill] / [instructions]
+l1i_miss% = 100 * [l1i_cache_refill] / [l1i_cache]
+l1d_miss% = 100 * [l1d_cache_refill] / [l1d_cache]
+
+#L2_Cache_Effectiveness Metrics
+l2_mpki = 1000 * [l2d_cache_refill] / [instructions]
+l2_miss% = 100 * [l2d_cache_refill] / [l2d_cache]
+
+#Operation_Mix Metrics
+branch_percentage = 100 * ([br_immed_spec] + [br_indirect_spec]) / [inst_spec]
+crypto_percentage = 100 * [crypto_spec] / [inst_spec]
+integer_dp_percentage = 100 * [dp_spec] / [inst_spec]
+load_percentage = 100 * [ld_spec] / [inst_spec]
+store_percentage = 100 * [st_spec] / [inst_spec]
+scalar_fp_percentage = 100 * [vfp_spec] / [inst_spec]
+simd_percentage = 100 * [ase_spec] / [inst_spec]
+
+#Pipeline_Stall_Frontend
+stall_frontend_cache_rate = 100 * [stall_frontend_cache] / [cycles]
+stall_frontend_tlb_rate = 100 * [stall_frontend_tlb] / [cycles]
+stall_recovery_rate = 100 * [idr_stall_flush] / [cycles]
+stall_fronetend_bob_rate = 100 * [idr_stall_bob_id] / [cycles]
+
+#Pipeline_Stall_Backend
+stall_backend_cache_rate = 100 * [stall_backend_cache] / [cycles]
+stall_backend_tlb_rate = 100 * [stall_backend_tlb] / [cycles]
+stall_backend_mem_rate =  100 * ([stall_backend_cache] + [stall_backend_tlb]) / [cycles]
+stall_backend_core_rate = 100 * ([stalled_cycles_backend]-[stall_backend_tlb]-[stall_backend_cache]) / [cycles]
+stall_backend_resource_rate = 100 * [stall_backend_resource] / [cycles]
+stall_rob_id_rate = 100 * [idr_stall_rob_id] / [cycles]
+stall_ixu_sched_rate = 100 * [idr_stall_ixu_sched] / [cycles]
+stall_fsu_sched_rate = 100 * [idr_stall_fsu_sched] / [cycles]
+stall_lob_id_rate = 100 * [idr_stall_lob_id] / [cycles]
+stall_sob_id_rate = 100 * [idr_stall_sob_id] / [cycles]
+
+
+##uncore_metrics, don't remove this seperator
+slc_miss% = 100 * [slc_miss] / [slc_access]
+mc_retry_rate% = 100 * [mc_retries] / [mc_reqs]
+
+memrd_bw_GBps = 32 * ([wp_memrd_1] + [wp_memrd_2] + [wp_memrd_3] + [wp_memrd_4] + [wp_memrd_5] + [wp_memrd_6] + [wp_memrd_7] + [wp_memrd_8]) / (1024*1024*1024) / [const_sampletime]
+memwr_bw_GBps = 32 * ([wp_memwr_1] + [wp_memwr_2] + [wp_memwr_3] + [wp_memwr_4] + [wp_memwr_5] + [wp_memwr_6] + [wp_memwr_7] + [wp_memwr_8]) / (1024*1024*1024) / [const_sampletime]
+
+ccix_in_bw_MBps = 32 * ([ccix_in_1] + [ccix_in_2]) / (1024*1024) / [const_sampletime]
+ccix_out_bw_MBps = 32 * ([ccix_out_1] + [ccix_out_2]) / (1024*1024) / [const_sampletime]

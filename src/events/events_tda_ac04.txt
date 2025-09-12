@@ -1,0 +1,96 @@
+###########################################################################
+# Copyright (c) 2025, Ampere Computing LLC.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
+# License terms can be found in the LICENSE.TXT file at the root of this project.
+###########################################################################
+
+## Dont remove this identifier
+events_core
+## if the named events are not found, hex value based r* events will be used
+#Cycle_Accounting
+{
+cycles  | r11
+instructions | r08
+}
+
+#frontend
+{
+cycles | r11
+stalled-cycles-frontend | r23
+stall_slot_frontend | r3e
+stall_frontend_tlb | r815c
+stall_frontend_cache | rd20b
+idr_stall_bob_id | rd200
+idr_stall_flush | rd206
+}
+
+#backend
+{
+cycles | r11
+stalled-cycles-backend | r24
+stall_slot_backend | r3d
+stall_backend_tlb | r8167
+stall_backend_cache | rd20d
+stall_backend_mem | r4005
+stall_backend_resource | rd20f
+}
+
+#resource units stall
+{
+cycles | r11
+idr_stall_lob_id | rd201
+idr_stall_sob_id | rd202
+idr_stall_rob_id | rd205
+idr_stall_ixu_sched | rd203
+idr_stall_fsu_sched | rd204
+}
+
+#mixed operations
+{
+cycles | r11
+ixu_num_uops_issued | rd300
+fsu_issued | rd400
+br_mis_pred_retired | r22
+gpc_flush | r120
+op_retired | r3a
+op_spec | r3b
+}
+
+
+## END OF EVENTS. DON'T EDIT LINE BREAKER
+
+;
+
+## start of metrics
+
+#TDA
+IPC = [instructions] / [cycles]
+cpu_freq = [cycles] / ([const_cpus] * [const_sampletime] ) / 1000000000
+frontend_. = 100 * (([cycles] * 4) - [op_spec] - [stall_slot_backend]) / ([cycles] * [const_width])
+frontend_latency_.. = 100 * ([stalled-cycles-frontend] - (([stall_slot_frontend] - (((([cycles] * 4) - [op_spec] - [stall_slot_backend]) / ([cycles] * [const_width])) * [cycles] * 4))/4)) / [cycles]
+i_cache_miss_... = 100 * ([stall_frontend_cache] / [cycles])
+i_tlb_miss_... = 100 * ([stall_frontend_tlb] / [cycles])
+recovery_... = 100 * [idr_stall_flush] / [cycles]
+bob_full_... = 100 * [idr_stall_bob_id] / [cycles]
+frontend_bw_.. = 100 * (((([cycles] * 4) - [op_spec] - [stall_slot_backend]) / ([cycles] * [const_width])) - (([stalled-cycles-frontend] - (([stall_slot_frontend] - (((([cycles] * 4) - [op_spec] - [stall_slot_backend]) / ([cycles] * [const_width])) * [cycles] * 4))/4)) / [cycles]))
+backend_. = 100 * [stall_slot_backend] / ([cycles] * [const_width])
+memory_.. = 100 * (([stall_backend_tlb] + [stall_backend_cache]) * [const_width]) / ([cycles] * [const_width])
+d_cache_l1_miss_... = 100 * (([stall_backend_cache] - [stall_backend_mem]) / [cycles])
+d_tlb_miss_... = 100 * [stall_backend_tlb] / [cycles]
+d_cache_l2_miss_... = 100 * [stall_backend_mem] / [cycles]
+core_.. = 100 * (([stalled-cycles-backend] - ([stall_backend_tlb] + [stall_backend_cache])) * [const_width]) / ([cycles] * [const_width])
+resource_... = 100 * [stall_backend_resource] / [cycles]
+rob_full_.... = 100 * [idr_stall_rob_id] / [cycles]
+ixu_full_.... = 100 * [idr_stall_ixu_sched] / [cycles]
+fsu_full_.... = 100 * [idr_stall_fsu_sched] / [cycles]
+lob_full_.... = 100 * [idr_stall_lob_id] / [cycles]
+sob_full_.... = 100 * [idr_stall_sob_id] / [cycles]
+retired_. = 100 * [op_retired] / ([cycles] * [const_width])
+pipe_util_.. = 100 * ([ixu_num_uops_issued] + [fsu_issued]) / ([cycles] * ([const_ixu_exec_width] + [const_fsu_exec_width]))
+ixu_pipe_util_... = 100 * [ixu_num_uops_issued] / ([cycles] * [const_ixu_exec_width])
+fsu_pipe_util_... = 100 * [fsu_issued] / ([cycles] * [const_fsu_exec_width])
+lost_. = 100 * ([op_spec] - [op_retired]) / ([cycles] * [const_width])
+branch_mispredict_.. = 100 * ([br_mis_pred_retired] / [gpc_flush]) * ([op_spec] - [op_retired]) / ([cycles] * [const_width])
+other_clears_.. = 100 * (([op_spec] - [op_retired]) / ([cycles] * [const_width])) - (([br_mis_pred_retired] / [gpc_flush]) * ([op_spec] - [op_retired]) / ([cycles] * [const_width]))

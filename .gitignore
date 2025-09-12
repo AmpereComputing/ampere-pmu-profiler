@@ -1,0 +1,10 @@
+*/__pycache__/*
+htmlcov
+.cache/
+.coverage
+*_cache
+*.log
+tda/*
+test_cores/*
+data/*
+*.pyc

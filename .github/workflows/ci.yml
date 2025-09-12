@@ -1,0 +1,40 @@
+name: Build & Testing
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    
+jobs:
+    test-on-ampere:
+        runs-on: [self-hosted, linux, arm64]
+        steps:
+            - name: Cleanup previous workspace
+              run: sudo rm -rf /home/ci/oss_app_runner/_work/ampere-pmu-profiler/ampere-pmu-profiler/*
+              continue-on-error: true
+
+            - name: Checkout code
+              uses: actions/checkout@v4
+      
+            - name: Set up Poetry
+              uses: abatilo/actions-poetry@v2
+              with:
+                poetry-version: "1.8.2"
+      
+            - name: Install dependencies
+              run: poetry install
+
+            - name: Link poetry scripts
+              run: sudo ln -sf $(poetry env info --path)/bin/app /usr/local/bin/app && sudo ln -sf $(poetry env info --path)/bin/postprocess /usr/local/bin/postprocess
+
+            - name: check format
+              run: poetry run black --check src
+
+            - name: check type error
+              run: poetry run mypy src --ignore-missing-imports
+
+            - name: check linting
+              run: poetry run ruff check src
+
+            - name: Run pytest
+              run: poetry run pytest --cov=src/collector --cov=src/postprocessor --cov-report=html

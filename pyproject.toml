@@ -1,0 +1,38 @@
+[tool.poetry]
+name = "ampere-pmu-profiler"
+version = "2.0"
+description = "perf pmu tool used to analyze workload's characteristics at the Microarchitecture(uArch) level"
+authors = ["Karan Kamatgi <krkamatgi@amperecomputing.com>", "David Zeng <dzeng@amperecomputing.com>"]
+readme = "README.md"
+packages = [
+	{ include = "collector", from = "src" },
+	{ include = "postprocessor", from = "src" }
+] 
+
+[tool.poetry.scripts]
+app = "collector.cli:main"
+postprocess = "postprocessor.postprocess:main"
+tda = "postprocessor.tda:main"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+click = "^8.2.1"
+numpy = "^2.3.0"
+pandas = "^2.3.0"
+plotly = "^6.1.2"
+yattag = "^1.16.1"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.2.1"
+black = "^24.3.0"
+flake8 = "^7.0.0"
+mypy = "^1.10.0"
+isort = "^5.13.2"
+pytest-cov = "^5.0.0"
+pytest-console-scripts = "^1.4.1"
+bandit = "^1.8.5"
+ruff = "^0.4"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

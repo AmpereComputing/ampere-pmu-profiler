@@ -1,0 +1,132 @@
+###########################################################################
+# Copyright (c) 2025, Ampere Computing LLC.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
+# License terms can be found in the LICENSE.TXT file at the root of this project.
+###########################################################################
+
+## Dont remove this identifier
+events_core
+## if the named events are not found, hex value based r* events will be used
+## Altra Family supports max 6 events in a group
+## AmpereOne Family suppports 10 events in a group
+#General
+{
+cycles              | r11
+instructions        | r08
+cycles:k            | r11:k
+instructions:k      | r08:k
+}
+#Branch_Effectiveness:
+{
+br_mis_pred_retired | r22
+br_retired          | r21
+instructions        | r08
+}
+#DTLB_Effectiveness
+{
+dtlb_walk           | r34
+l1d_tlb             | r25
+l1d_tlb_refill      | r05
+l2d_tlb             | r2f
+l2d_tlb_refill      | r2d
+instructions        | r08
+}
+#ITLB_Effectiveness:
+{
+itlb_walk           | r35
+l1i_tlb             | r26
+l1i_tlb_refill      | r02
+instructions        | r08
+}
+#L1_Cache_Effectiveness:
+{
+l1i_cache           | r14
+l1i_cache_refill    | r1
+l1d_cache           | r4
+l1d_cache_refill    | r3
+instructions        | r08
+}
+#L2_Cache_Effectiveness:
+{
+l2d_cache           | r16
+l2d_cache_refill    | r17
+instructions        | r08
+}
+#Cycle_Accounting:
+{
+stalled-cycles-frontend | r23
+stalled-cycles-backend  | r24
+cycles                  | r11
+}
+#Operation_Mix_Group1:
+{
+ld_spec             | r70
+st_spec             | r71
+dp_spec             | r73
+ase_spec            | r74
+vfp_spec            | r75
+inst_spec           | r1b
+}
+#Operation_Mix_Group2:
+{
+crypto_spec         | r77
+pc_write_spec       | r76
+br_immed_spec       | r78
+br_return_spec      | r79
+br_indirect_spec    | r7a
+inst_spec           | r1b
+}
+
+## END OF EVENTS. DON'T EDIT LINE BREAKER
+
+;
+
+## Start of metrics
+
+#General Metrics
+IPC = [instructions] / [cycles]
+IPC_kernel = [instructions:k] / [cycles:k]
+cpu_freq = [cycles] / ([const_cpus] * [const_sampletime] ) / 1000000000
+
+#Cycle_Accounting Metrics
+frontend_stall% = 100 * [stalled-cycles-frontend] / [cycles]
+backend_stall% = 100 * [stalled-cycles-backend] / [cycles]
+
+#Branch_Effectiveness Metrics
+branch_mispredict% = 100 * [br_mis_pred_retired] / [br_retired]
+branch_mpki = 1000 * [br_mis_pred_retired] / [instructions]
+
+#DTLB_Effectiveness Metrics
+dtlb_mpki = 1000 * [dtlb_walk] / [instructions]
+dtlb_walk% = 100 * [dtlb_walk] / [l1d_tlb]
+l1d_tlb_miss% = 100 * [l1d_tlb_refill] / [l1d_tlb]
+l1d_tlb_mpki = 1000 * [l1d_tlb_refill] / [instructions]
+l2_tlb_miss% = [l2d_tlb_refill] / [l2d_tlb]
+l2_tlb_mpki = 1000 * [l2d_tlb_refill] / [instructions]
+
+#ITLB_Effectiveness Metrics
+itlb_mpki = 1000 * [itlb_walk] / [instructions]
+itlb_walk% = 100 * [itlb_walk] / [l1i_tlb]
+l1i_tlb_miss% = 100 * [l1i_tlb_refill] / [l1i_tlb]
+l1i_tlb_mpki = 1000 * [l1i_tlb_refill] / [instructions]
+
+#L1_Cache_Effectiveness Metrics
+l1i_mpki = 1000 * [l1i_cache_refill] / [instructions]
+l1d_mpki = 1000 * [l1d_cache_refill] / [instructions]
+l1i_miss% = 100 * [l1i_cache_refill] / [l1i_cache]
+l1d_miss% = 100 * [l1d_cache_refill] / [l1d_cache]
+
+#L2_Cache_Effectiveness Metrics
+l2_mpki = 1000 * [l2d_cache_refill] / [instructions]
+l2_miss% = 100 * [l2d_cache_refill] / [l2d_cache]
+
+#Operation_Mix Metrics
+branch_percentage = 100 * ([br_immed_spec] + [br_indirect_spec]) / [inst_spec]
+crypto_percentage = 100 * [crypto_spec] / [inst_spec]
+integer_dp_percentage = 100 * [dp_spec] / [inst_spec]
+load_percentage = 100 * [ld_spec] / [inst_spec]
+store_percentage = 100 * [st_spec] / [inst_spec]
+scalar_fp_percentage = 100 * [vfp_spec] / [inst_spec]
+simd_percentage = 100 * [ase_spec] / [inst_spec]
