@@ -1,3 +1,7 @@
+# Copyright (c) 2025, Ampere Computing LLC.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
 import subprocess
 import os
 import re

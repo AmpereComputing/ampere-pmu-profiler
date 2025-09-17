@@ -1,9 +1,7 @@
-# import subprocess
-# import os
-# import re
-# import shutil
-# import platform
-# import pytest
+# Copyright (c) 2025, Ampere Computing LLC.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
 from click.testing import CliRunner
 from postprocessor import tda
 
@@ -25,5 +23,3 @@ def test_tda_icicle():
     result = CliRunner().invoke(tda.main, ["-i", "tda", "-t", "icicle"])
     assert result.exit_code == 0
 
-#     assert "static HTML file written" in result.stderr
-#     assert result.returncode == 0
