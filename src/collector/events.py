@@ -19,8 +19,9 @@ class EventParser:
             perf_list = subprocess.check_output(["perf", "list"], text=True)
         except subprocess.CalledProcessError as e:
             raise RuntimeError(f"Failed to execute perf list: {e}")
-        arm_cmn_0, arm_cmn_1 = EventParser.__get_arm_cmn_names(perf_list)
         support_cmn = 1 if "arm_cmn" in perf_list else 0
+        if support_cmn:
+            arm_cmn_0, arm_cmn_1 = EventParser.__get_arm_cmn_names(perf_list)
         events_core = ""
         events_cmn = ""
         events_type = 99
