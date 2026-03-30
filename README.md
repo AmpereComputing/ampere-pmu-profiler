@@ -14,7 +14,7 @@ Ampere PMU Profiler (APP) is a tool designed to help analyze workload behavior a
   poetry install
 ```
 - Root privilege
-- Kernel with PMU support or Ampere reference kernel (https://github.com/AmpereComputing/ampere-centos-kernel)
+- A fairly newer kernel(>5.5) with PMU support (Try perf list)
 
 ## Usage
 ```
