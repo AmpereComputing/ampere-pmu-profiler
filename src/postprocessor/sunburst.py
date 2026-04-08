@@ -6,6 +6,7 @@ from yattag import Doc
 import plotly.graph_objects as go
 import pandas as pd
 import numpy as np
+import os
 
 doc, tag, text = Doc().tagtext()
 metric_parent = {}
@@ -14,7 +15,7 @@ metric_level = {}
 """ returns sunbursts figure with L1, L2, L3 and L4 TDA """
 
 
-def get_sunburst(input_csv):
+def get_sunburst(input_csv, res_dir):
     L1 = "pipeline"
     L2 = ""
     L3 = ""
@@ -114,6 +115,55 @@ def get_sunburst(input_csv):
     TDA["value"] = TDA["value"].clip(lower=0)
     TDA = realign_metrics(TDA)
     validate_hierarchy(TDA)
+    # Save with 'N/A' for missing values
+    TDA.to_csv(os.path.join(res_dir, "tda.csv"), index=False, na_rep="N/A")
+
+    # Define the color map for the main categories
+    color_map = {
+        "retired": "#00CC96",  # Teal / Medium Aquamarine
+        "backend": "#636EFA",  # Royal Blue / Cornflower Blue
+        "lost": "#AB63FA",  # Amethyst / Muted Purple
+        "frontend": "#EF553B",  # Tomato / Coral Red
+        "(?)": "#B0C4DE",  # LightSteelBlue (default)
+    }
+
+    # Create a helper structure for fast parent lookups.
+    parent_lookup = pd.Series(TDA.parent.values, index=TDA.id).to_dict()
+
+    # Use a cache (memoization) to avoid re-calculating for the same branches.
+    ancestor_cache = {}
+
+    def get_top_level_ancestor(item_id):
+        if item_id in ancestor_cache:
+            return ancestor_cache[item_id]
+
+        parent = parent_lookup.get(item_id)
+
+        # Base cases for recursion:
+        # If the item's parent is 'pipeline', it is the top-level ancestor.
+        if parent == "pipeline":
+            ancestor_cache[item_id] = item_id
+            return item_id
+        # If it has no parent or the parent is the root, then it's the root.
+        if not parent or parent == "":
+            ancestor_cache[item_id] = item_id
+            return item_id
+
+        # Recursive step: find the ancestor of my parent.
+        ancestor = get_top_level_ancestor(parent)
+        ancestor_cache[item_id] = ancestor
+        return ancestor
+
+    # Build the list of colors in the same order as the TDA dataframe.
+    final_colors = []
+    for item_id in TDA.id:
+        if item_id == "pipeline":
+            final_colors.append("white")  # Color for the center circle
+            continue
+
+        ancestor = get_top_level_ancestor(item_id)
+        color = color_map.get(ancestor, color_map["(?)"])
+        final_colors.append(color)
 
     """Create a sunburst plot using Plotly Express"""
 
@@ -128,6 +178,10 @@ def get_sunburst(input_csv):
             customdata=TDA["description"],
             hovertemplate="<b>%{label}</b> <br> Value: %{value:.2f}<br>Description: %{customdata}<extra> </extra>",
             textinfo="label+percent entry",
+            textfont=dict(size=16),
+            # Apply the generated list of colors to the chart.
+            marker=dict(colors=final_colors),
+            marker_line=dict(color="white", width=2),
         )
     )
     fig.update_layout(

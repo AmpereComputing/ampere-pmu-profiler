@@ -38,7 +38,7 @@ def write_html(res_dir, base_input_file, html_report_out, chart_type):
                 if chart_type == "icicle":
                     fig1 = icicle.get_icicle(tda_inp)
                 else:
-                    fig1 = sunburst.get_sunburst(tda_inp)
+                    fig1 = sunburst.get_sunburst(tda_inp, res_dir)
                 with tag("h2", align="center"):
                     text("Top Down  Accounting (TDA)")
                 with doc.tag("div"):
