@@ -15,7 +15,7 @@ postprocess = "postprocessor.postprocess:main"
 tda = "postprocessor.tda:main"
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = ">=3.12,<=3.13.0"
 click = "^8.2.1"
 numpy = "^2.3.0"
 pandas = "^2.3.0"
